@@ -1,4 +1,4 @@
-# TTY-Countdown
+# Pomodoro Countdown
 
 ![screenshot](https://i.imgur.com/ro5dsb0.png)
 
