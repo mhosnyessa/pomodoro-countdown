@@ -1,34 +1,30 @@
 # TTY-Countdown
 
-![screenshot](http://i.imgur.com/lnRXPyZ.png)
+![screenshot](https://i.imgur.com/ro5dsb0.png)
 
-A countdown timer that will live forever in the shadow of 
-[tty-clock](https://github.com/xorg62/tty-clock).
+A very very simple pomodoro timer implementation that works on the terminal.
 
+It sends a notification whenever a timer finishes.
 
 ## Usage
-    usage: tty-countdown [-h] [-m MINUTES] [-s SECONDS] [-f FONT] [-n]
-    
-    Fancy countdown script
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -m MINUTES, --minutes MINUTES
-                            Number of minutes
-      -s SECONDS, --seconds SECONDS
-                            Number of seconds
-      -f FONT, --font FONT  Custom font file
-      -n, --nocenter        Do not center timer (more efficient)
-    
+```
+usage: pomodoro-timer [-h] [-w WORK] [-r REST] [-f FONT] [-n]
+
+Fancy pomodoro timer script
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -w WORK, --work WORK  Number of minutes of work
+  -r REST, --rest REST  Number of minutes of rest
+  -f FONT, --font FONT  Custom font file
+  -n, --nocenter        Do not center timer (more efficient)
+```
+
+The work timer starts instantly, you can skip a timer by pressing CTRL+C.
+
+To close the program, press CTRL+C twice.
+
 ## Installation
-### Arch Linux
-* [Install from the AUR](https://aur.archlinux.org/packages/tty-countdown-git)
-* `pacaur -S tty-countdown-git`
 
-### Other
-    $ git clone https://github.com/veggiedefender/tty-countdown && cd tty-countdown
-    $ sudo cp tty-countdown /usr/bin/ && chmod +x /usr/bin/tty-countdown
-    $ sudo mkdir /usr/share/tty-countdown/ && cp font.txt /usr/share/tty-countdown/
-
-### Windows
-* Does this even work on Windows?
+Clone this repo, then run:
+`python pomodoro-timer`
