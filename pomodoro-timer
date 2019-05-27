@@ -21,12 +21,15 @@ parser.add_argument("-r", "--rest", action="store",
 parser.add_argument("-f", "--font", action="store",
                     help="Custom font file",
                     default="./font.txt")
+parser.add_argument("-t", "--total", action="store_true",
+                    help="Show the total timer")
 parser.add_argument("-n", "--nocenter", action="store_true",
                     help="Do not center timer (more efficient)")
 
 args = parser.parse_args()
 
 centered = not args.nocenter
+show_total = args.total
 work_seconds = args.work * 60
 rest_seconds = args.rest * 60
 fontFile = args.font
@@ -37,7 +40,8 @@ fontFile = args.font
 
 def asciiFormat(string, font):
     # enumerate numbers and colons
-    string = list(map(int, [c.replace(":", "10") for c in list(string)]))
+    string = list(
+        map(int, [c.replace(":", "10").replace("/", "11") for c in list(string)]))
     height = len(font[0])
 
     frame = ""
@@ -92,14 +96,19 @@ with open(fontFile, "r") as f:
 
 
 def writing_loop(seconds, message, color):
+    initialTime = "%s:%02d" % divmod(seconds, 60)
     while seconds >= 0:
         t = "%s:%02d" % divmod(seconds, 60)
         clear()
         # Color
         print(color)
         # Print the clock and the message
-        print(center(asciiFormat(t, font), getTermDimensions()), end="")
-        print(message)
+        if show_total is True:
+            print(center(asciiFormat(
+                '{0}/{1}'.format(t, initialTime), font), getTermDimensions()), end="")
+        else:
+            print(center(asciiFormat(t, font), getTermDimensions()), end="")
+        print(message, end='')
         # Remove color
         print('\033[0m')
         seconds -= 1
@@ -120,8 +129,11 @@ def writing_loop(seconds, message, color):
 mynotification = GTKNotification()
 
 while True:
+    # Work timer
     writing_loop(work_seconds, 'You Should Work!', '\033[92m')
-    # Send notification
-    mynotification.send_notification('Work Finished', 'Time to rest now!!')
+    # Send notification about resting time
+    mynotification.send_notification('Pomodoro Timer', 'Rest time 🛋️')
+    # Rest timer
     writing_loop(rest_seconds, 'You Should Rest!', '\033[94m')
-    mynotification.send_notification('Rest Finished', 'Time to work now!!')
+    # Send notification about work time
+    mynotification.send_notification('Pomodoro Timer', 'Work time 💻')
