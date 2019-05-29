@@ -4,6 +4,8 @@ import subprocess
 import argparse
 import time
 from gtknotification import GTKNotification
+from os.path import realpath, dirname
+from sys import stdout
 
 # Default dimensions just in case
 DEFAULT_HEIGHT = 24
@@ -20,7 +22,7 @@ parser.add_argument("-r", "--rest", action="store",
                     default=5)
 parser.add_argument("-f", "--font", action="store",
                     help="Custom font file",
-                    default="./font.txt")
+                    default=dirname(realpath(__file__))+'/font.txt')
 parser.add_argument("-t", "--total", action="store_true",
                     help="Show the total timer")
 parser.add_argument("-n", "--nocenter", action="store_true",
@@ -77,7 +79,7 @@ def center(frame, termDimensions):
 
 def clear():
     # Clear the screen
-    print("\033c")
+    print("\033c", end='')
 
 
 def getTermDimensions():
@@ -95,22 +97,43 @@ with open(fontFile, "r") as f:
     font = [symbol.split("\n") for symbol in font]
 
 
+def print_progress_bar(left_time, total_time, term_dimension):
+    try:
+        percentage = 1 - (left_time / total_time)
+    except:
+        print('-' * term_dimension[1])
+        return
+    try:
+        number_of_squares = int(term_dimension[1] * percentage)
+    except:
+        print('=' * term_dimension[1])
+        return
+    print('=' * number_of_squares, end='')
+    print('-' * (term_dimension[1] - number_of_squares), end='')
+
+
 def writing_loop(seconds, message, color):
+    initial_time_seconds = seconds
     initialTime = "%s:%02d" % divmod(seconds, 60)
     while seconds >= 0:
         t = "%s:%02d" % divmod(seconds, 60)
         clear()
         # Color
-        print(color)
+        print(color, end='')
         # Print the clock and the message
         if show_total is True:
             print(center(asciiFormat(
                 '{0}/{1}'.format(t, initialTime), font), getTermDimensions()), end="")
         else:
             print(center(asciiFormat(t, font), getTermDimensions()), end="")
-        print(message, end='')
+        # Show message
+        print(message)
+        # Show progress bar
+        print_progress_bar(seconds, initial_time_seconds, getTermDimensions())
         # Remove color
-        print('\033[0m')
+        print('\033[0m', end='')
+        stdout.flush()
+
         seconds -= 1
         try:
             time.sleep(1)
