@@ -7,6 +7,9 @@ from gtknotification import GTKNotification
 from os.path import realpath, dirname
 from sys import stdout
 
+#adding sounds 
+from playsound import playsound
+
 # Default dimensions just in case
 DEFAULT_HEIGHT = 24
 DEFAULT_WIDTH = 80
@@ -151,12 +154,26 @@ def writing_loop(seconds, message, color):
 
 mynotification = GTKNotification()
 
+pomodoros_done = 0
+
 while True:
     # Work timer
-    writing_loop(work_seconds, 'You Should Work!', '\033[92m')
+    #writing_loop(work_seconds, 'Hi, Muhammed, you Should Work!', '\033[92m')
+    writing_loop(work_seconds, f'Hi, Muhammed, you Should Work! \nPomodoro No.: {pomodoros_done + 1}', '\033[92m')
+    pomodoros_done += 1
     # Send notification about resting time
     mynotification.send_notification('Pomodoro Timer', 'Rest time 🛋️')
+    # adding a sound at the end 
+    playsound('./assets/break-beep.wav')
+
+    if pomodoros_done == 4:
+        playsound('./assets/back-to-work-beep.wav')
+        playsound('./assets/back-to-work-beep.wav')
+        playsound('./assets/back-to-work-beep.wav')
     # Rest timer
-    writing_loop(rest_seconds, 'You Should Rest!', '\033[94m')
+    #writing_loop(rest_seconds, 'Muhammed, you deserve a rest!', '\033[94m')
+    writing_loop(rest_seconds, 'Muhammed, you deserve a rest!', '\033[94m')
     # Send notification about work time
     mynotification.send_notification('Pomodoro Timer', 'Work time 💻')
+    # adding a sound at the end 
+    playsound('./assets/back-to-work-beep.wav')
