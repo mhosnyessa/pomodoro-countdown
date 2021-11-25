@@ -30,6 +30,9 @@ parser.add_argument("-t", "--total", action="store_true",
                     help="Show the total timer")
 parser.add_argument("-n", "--nocenter", action="store_true",
                     help="Do not center timer (more efficient)")
+parser.add_argument("-p", "--pomodoros_done", action="store",
+                    type=int, help="numbers of completed pomodoros to start with",
+                    default=0)
 
 args = parser.parse_args()
 
@@ -38,6 +41,8 @@ show_total = args.total
 work_seconds = args.work * 60
 rest_seconds = args.rest * 60
 fontFile = args.font
+pomodoros_done = args.pomodoros_done
+
 
 # Turn string into blocky ascii representation
 # Supports 0-9, colon
@@ -154,26 +159,39 @@ def writing_loop(seconds, message, color):
 
 mynotification = GTKNotification()
 
-pomodoros_done = 0
 
 while True:
+    if pomodoros_done == 0:
+        playsound('./assets/break-beep.wav')
+
+    if pomodoros_done / 4 >= 1:
+        cyclesText = f'\nCycles completed: {pomodoros_done // 4}'
+    else:
+        cyclesText = ''
     # Work timer
-    #writing_loop(work_seconds, 'Hi, Muhammed, you Should Work!', '\033[92m')
-    writing_loop(work_seconds, f'Hi, Muhammed, you Should Work! \nPomodoro No.: {pomodoros_done + 1}', '\033[92m')
+    writing_loop(work_seconds, f'Hi, Muhammed, you Should Work! \nPomodoro No.: {pomodoros_done + 1}{cyclesText}', '\033[92m')
     pomodoros_done += 1
     # Send notification about resting time
     mynotification.send_notification('Pomodoro Timer', 'Rest time 🛋️')
     # adding a sound at the end 
     playsound('./assets/break-beep.wav')
 
+
     if pomodoros_done == 4:
         playsound('./assets/back-to-work-beep.wav')
         playsound('./assets/back-to-work-beep.wav')
         playsound('./assets/back-to-work-beep.wav')
     # Rest timer
-    #writing_loop(rest_seconds, 'Muhammed, you deserve a rest!', '\033[94m')
     writing_loop(rest_seconds, 'Muhammed, you deserve a rest!', '\033[94m')
     # Send notification about work time
     mynotification.send_notification('Pomodoro Timer', 'Work time 💻')
     # adding a sound at the end 
     playsound('./assets/back-to-work-beep.wav')
+
+    input("Press inter to start next session!")
+
+
+
+
+
+
